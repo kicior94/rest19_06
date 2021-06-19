@@ -39,6 +39,7 @@ def game_list(request):
             status=status.HTTP_400_BAD_REQUEST
         )
 
+
 @csrf_exempt
 def game_detail(request, id):
     try:
@@ -48,12 +49,22 @@ def game_detail(request, id):
         return JSONResponse(
             data=error_message,
             status=status.HTTP_404_NOT_FOUND
-            )
-        #return HTTPResponse(status=status.HTTP_404_NOT_FOUND)
+        )
+        # return HTTPResponse(status=status.HTTP_404_NOT_FOUND)
 
-    if request.method=='GET':
-        pass
-    elif request.method=='PUT':
-        pass
-    elif request.method=='DELETE':
-        pass
+    if request.method == 'GET':
+        game_serializer = GameSerializer(game)
+        return JSONResponse(game_serializer.data)
+    elif request.method == 'PUT':
+        game_data = JSONParser().parse(request)
+        game_serializer = GameSerializer(game, data=game_data)
+        if game_serializer.is_valid():
+            game_serializer.save()
+            return JSONResponse(data=game_serializer.data)
+        return JSONResponse(
+            data=game_serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    elif request.method == 'DELETE':
+        game.delete()
+        return HttpResponse(status=status.HTTP_204_NO_CONTENT)
