@@ -1,11 +1,30 @@
 from rest_framework import serializers
-from .models import Game
+from .models import Game, GameCategory, Player, PlayerScore
+import games.views
 
+
+class GameCategorySerializer(serializers.HyperlinkedModelSerializer):
+    games = serializers.HyperlinkedRelatedField(
+        many=True,
+        read_only=True,
+        view_name = 'game-detail'
+    )
+
+    class Meta:
+        model = GameCategory
+        fields = (
+            'url',
+            'pk',
+            'name',
+            'games'
+        )
 
 class GameSerializer(serializers.ModelSerializer):
+    game_category = serializers.SlugRelatedField(queryset=GameCategory.objects.all(), slug_field='name')
+
     class Meta:
         model = Game
-        fields = ('id', 'name', 'release_date', 'game_category', 'played')
+        fields = ('url', 'name', 'release_date', 'game_category', 'played')
 
 # class GameSerializer(serializers.Serializer):
 #     pk = serializers.IntegerField(read_only=True)

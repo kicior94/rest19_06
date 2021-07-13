@@ -36,7 +36,7 @@ def game_list(request):
 
 
 @csrf_exempt
-@api_view(['GET', 'PUT', 'POST', 'DELETE'])
+@api_view(['GET', 'PUT', 'DELETE'])
 def game_detail(request, id):
     try:
         game = Game.objects.get(pk=id)
